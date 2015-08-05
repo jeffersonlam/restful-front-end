@@ -2,8 +2,10 @@
   "name": "node-api",
   "main": "server.js",
   "dependencies": {
+    "body-parser": "~1.0.1",
+    "consolidate": "^0.13.1",
+    "dustjs-linkedin": "^2.7.2",
     "express": "~4.0.0",
-    "mongoose": "~3.6.13",
-    "body-parser": "~1.0.1"
+    "mongoose": "~3.6.13"
   }
 }

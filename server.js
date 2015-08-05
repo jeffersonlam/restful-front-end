@@ -8,6 +8,8 @@ var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var mongoose   = require('mongoose');
+var cons       = require('consolidate');
+var dust     = require('dustjs-linkedin');
 mongoose.connect('mongodb://admin:root@ds059672.mongolab.com:59672/restful-bears'); // connect to our database
 var Bear     = require('./app/models/bear');
 
@@ -15,6 +17,10 @@ var Bear     = require('./app/models/bear');
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.engine('html', cons.dust);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+
 
 var port = process.env.PORT || 8080;        // set our port
 
@@ -31,14 +37,19 @@ router.use(function(req, res, next) {
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.get('/', function(req, res) {
-    res.json({ message: 'hooray! welcome to our api!' });
+    res.render('index', { name: 'Express' });
 });
 
 // more routes for our API will happen here
 
+router.route('/api')
+    .get(function(req, res) {
+        res.send({message: 'hooray! welcome to our api'});
+    });
+
 // on routes that end in /bears
 // ----------------------------------------------------
-router.route('/bears')
+router.route('/api/bears')
 
     // create a bear (accessed at POST http://localhost:8080/api/bears)
     .post(function(req, res) {
@@ -64,7 +75,7 @@ router.route('/bears')
 
 // on routes that end in /bears/:bear_id
 // ----------------------------------------------------
-router.route('/bears/:bear_id')
+router.route('/api/bears/:bear_id')
 
     // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
     .get(function(req, res) {
@@ -111,7 +122,7 @@ router.route('/bears/:bear_id')
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
-app.use('/api', router);
+app.use('/', router);
 
 // START THE SERVER
 // =============================================================================
